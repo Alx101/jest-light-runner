@@ -100,7 +100,7 @@ export default async function run({
   }
   
   const result = addSnapshotData(
-    toTestResult(stats, results, test, CoverageInstrumenter),
+    toTestResult(stats, results, test, v8Coverage),
     snapshotState
   );
 
