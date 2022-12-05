@@ -2,7 +2,7 @@ import { Piscina } from "piscina";
 import supportsColor from "supports-color";
 import { MessageChannel } from "worker_threads";
 import { shouldInstrument } from "@jest/transform";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 /** @typedef {import("@jest/test-result").Test} Test */
 
@@ -47,7 +47,7 @@ export default class LightRunner {
    * @param {*} onResult
    * @param {*} onFailure
    */
-   runTests(tests, watcher, onStart, onResult, onFailure) {
+   async runTests(tests, watcher, onStart, onResult, onFailure) {
     const {
       updateSnapshot,
       testNamePattern,
@@ -55,13 +55,18 @@ export default class LightRunner {
       coverageProvider,
     } = this._config;
 
-    return Promise.all(
-      tests.map(test => {
+    // if (this._config.globalSetup) {
+    //   // Superglobal setup
+    //   const { default: setup } = await import(pathToFileURL(this._config.globalSetup));
+    //   if (typeof setup === "function") await setup();
+    // }
+    const res = await Promise.all(
+      tests.map(async (test, index) => {
         const mc = new MessageChannel();
         mc.port2.onmessage = () => onStart(test);
         mc.port2.unref();
 
-        return this._piscina
+        const res = await this._piscina
         .run(
           {
             test,
@@ -80,8 +85,17 @@ export default class LightRunner {
             ),
           error => void onFailure(test, error)
         );
+
+        if (index === tests.length - 1 && this._config.globalTeardown) {
+          // Superglobal teardown
+          const { default: teardown } = await import(pathToFileURL(this._config.globalTeardown));
+          if (typeof teardown === "function") await teardown();
+        }
+
+        return res
       })
     );
+    return res;
   }
 
   filterCoverage(result, projectConfig) {
