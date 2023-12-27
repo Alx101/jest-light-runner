@@ -1066,6 +1066,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"collect-v8-coverage@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "collect-v8-coverage@npm:1.0.2"
+  checksum: c10f41c39ab84629d16f9f6137bc8a63d332244383fc368caf2d2052b5e04c20cd1fd70f66fcf4e2422b84c8226598b776d39d5f2d2a51867cc1ed5d1982b4da
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
@@ -1684,6 +1691,8 @@ __metadata:
   dependencies:
     "@jest/expect": ^29.0.1
     "@jest/fake-timers": ^29.2.2
+    "@jest/transform": ^29.0.1
+    collect-v8-coverage: ^1.0.1
     jest-circus: ^29.0.1
     jest-each: ^29.0.1
     jest-mock: ^29.0.1
